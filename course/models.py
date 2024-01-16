@@ -3,7 +3,11 @@ from django.db import models
 
 class Course(models.Model):
     id = models.AutoField(primary_key=True)
-    code = models.CharField(unique=True, max_length=20)  # 课程编号 MATH001108 (短，多个课程共用)
+
+    jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
+
+    # 课程编号 MATH001108 (短，多个课程共用)
+    code = models.CharField(unique=True, max_length=20)
     name = models.CharField(max_length=20)  # 课程名
     period = models.IntegerField()  # 学时
     credits = models.FloatField()  # 学分
@@ -17,7 +21,8 @@ class Course(models.Model):
     exam_type = models.CharField(max_length=20)  # 考核方式
     grading_type = models.CharField(max_length=20)  # 评分制 (五等级制/百分制/二等级制)
 
-    description = models.CharField(max_length=1000, blank=True, null=True)  # 课程描述
+    description = models.CharField(
+        max_length=1000, blank=True, null=True)  # 课程描述
     info = models.CharField(max_length=10000)  # json string for other info
 
     def __str__(self):
@@ -43,7 +48,7 @@ class Semester(models.Model):
 
     jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
 
-    code = models.CharField(max_length=20)  # 2023FA
+    code = models.CharField(max_length=20)  # 202301 (学年+学期)
     name = models.CharField(max_length=20)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -54,24 +59,40 @@ class Semester(models.Model):
 
 class Location(models.Model):
     id = models.AutoField(primary_key=True)
+
+    jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
+
     campus = models.CharField(max_length=20)
-    builiding = models.CharField(max_length=20)
+    building = models.CharField(max_length=20)
     room = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f"{self.campus} {self.building} {self.room}"
 
 
 class Lesson(models.Model):
     class Lecture(models.Model):
         id = models.AutoField(primary_key=True)
+
+        # jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
+
         lesson_info = models.ForeignKey("Lesson", on_delete=models.CASCADE)
 
         teachers = models.ManyToManyField(Teacher)
         start_time = models.DateTimeField()
         end_time = models.DateTimeField()
 
-        location = models.ForeignKey(Location, on_delete=models.CASCADE)
+        location = models.ForeignKey(
+            Location, on_delete=models.CASCADE, blank=True, null=True)
+
+        def __str__(self):
+            return f"{self.lesson_info.course.name} ({self.lesson_info.code}) {self.start_time} - {self.end_time}"
 
     class Exam(models.Model):
         id = models.AutoField(primary_key=True)
+
+        jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
+
         lesson_info = models.ForeignKey("Lesson", on_delete=models.CASCADE)
         type = models.CharField(max_length=20)  # 考试类型：期中考试/期末考试/补考
 
@@ -80,9 +101,15 @@ class Lesson(models.Model):
 
         description = models.CharField(max_length=1000)  # 考试描述，例如 开卷/闭卷 注意事项等
 
-        location = models.ForeignKey(Location, on_delete=models.CASCADE)
+        # location = models.ForeignKey(Location, on_delete=models.CASCADE)
+        locations = models.ManyToManyField(Location, blank=True)
+
+        def __str__(self):
+            return f"{self.lesson_info.course.name} ({self.lesson_info.code}) {self.type} {self.start_time} - {self.end_time}"
 
     id = models.AutoField(primary_key=True)
+
+    jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
 
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)

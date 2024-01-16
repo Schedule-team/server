@@ -7,7 +7,7 @@ import json
 from django.core.management.base import BaseCommand, CommandError, CommandParser
 from course.models import *
 
-
+# Update semesters: (before any input are given)
 r = requests.get("https://catalog.ustc.edu.cn/get_token")
 token = r.json()["access_token"]
 r = requests.get(
@@ -17,6 +17,7 @@ semesters = {}
 for semester in r.json():
     s, _ = Semester.objects.update_or_create(
         jw_id=semester["id"],
+        #
         code=semester["code"],
         name=semester["nameZh"],
         start_date=datetime.datetime.strptime(semester["start"], "%Y-%m-%d"),
@@ -26,6 +27,8 @@ for semester in r.json():
 
 
 def handle_course(json):
+    # the following code is to prevent "NoneType cannot be subscripted" error
+    # a pep around optional chaining may relieve such issues, but for now we have to do this
     if not json["courseCategory"]:
         json["courseCategory"] = {"nameZh": ""}
     if not json["courseType"]:
@@ -44,14 +47,16 @@ def handle_course(json):
     c, _ = Course.objects.update_or_create(
         code=json["code"],
         #
+        jw_id=json["id"],
+        #
         name=json["nameZh"],
         period=json["periodInfo"]["total"],
         credits=json["credits"],
         #
-        course_type_base=json["courseCategory"]["nameZh"],
-        course_type_teaching_method=json["courseType"]["nameZh"],
-        course_type_join_type=json["courseGradation"]["nameZh"],
-        course_type_level=json["education"]["nameZh"],
+        type_base=json["courseCategory"]["nameZh"],
+        type_teaching_method=json["courseType"]["nameZh"],
+        type_join_type=json["courseGradation"]["nameZh"],
+        type_level=json["education"]["nameZh"],
         #
         open_department=json["defaultOpenDepart"]["simpleNameZh"],
         #
@@ -66,6 +71,7 @@ def handle_course(json):
 def handle_teacher(json):
     t, _ = Teacher.objects.update_or_create(
         jw_id=json["teacher"]["person"]["id"],
+        #
         name=json["teacher"]["person"]["nameZh"],
         email=json["teacher"]["person"]["contactInfo"]["email"],
         office_location=json["teacher"]["person"]["contactInfo"]["address"],
@@ -85,8 +91,11 @@ def handle_lesson(json, semester_id):
         handle_teacher(teacher_json) for teacher_json in json["teacherAssignmentList"]
     ]
     l, _ = Lesson.objects.update_or_create(
+        jw_id=json["id"],
+        #
         semester=semesters[semester_id],
         course=course,
+        #
         code=json["code"],
         campus=json["campus"]["nameZh"],
         start_week=json["scheduleStartWeek"],
@@ -121,7 +130,8 @@ def run(cookie, std_id):
     doc = lxml.html.fromstring(r.text)
     options = doc.xpath('//select[@id="semester"]/option')
     if len(options) == 0:
-        raise CommandError("Semesters not found, please check whether cookie is valid")
+        raise CommandError(
+            "Semesters not found, please check whether cookie is valid")
 
     print("Found " + str(len(options)) + " semesters")
 
@@ -151,7 +161,8 @@ class Command(BaseCommand):
         return super().add_arguments(parser)
 
     def handle(self, *args, **options):
-        cookie = input("Login to https://jw.ustc.edu.cn/ and copy the cookies here:")
+        cookie = input(
+            "Login to https://jw.ustc.edu.cn/ and copy the cookies here:")
         if not cookie:
             raise CommandError("No cookies provided")
         std_id = input("Look out for a integer in requests, paste it here:")
