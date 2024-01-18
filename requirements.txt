@@ -5,3 +5,4 @@ lxml
 requests
 datetime
 tqdm
+django-bootstrap-v5
