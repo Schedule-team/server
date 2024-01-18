@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <div class="container-fluid p-5 bg-primary text-white text-start">
+        <div class="row">
+            <div class="col-5">
+                <a class="text-white fs-1 fw-bold" href="{% url 'course' lesson.course.id %}"> {{lesson.course.name}}
+                </a>
+                <a class="text-white fs-1 fw-light p-2" href="{% url 'teacher' lesson.teachers.first.id %}">
+                    {{lesson.teachers.first.name}} </a>
+            </div>
+            <div class="col-5"> </div>
+            <div class="col-5"> {{lesson.semester.name}} / {{lesson.code}} </div>
+        </div>
+
+        <div class="row my-4 fw-bold">
+            <div class="col-5">学分   {{lesson.course.credits}}</div>
+            <div class="col-5">学时   {{lesson.course.period}}</div>
+            <div class="col-5">考核方式   {{lesson.course.exam_type}}</div>
+            <div class="col-5">评分制   {{lesson.course.grading_type}}</div>
+        </div>
+
+        <div class="row fw-light">
+            <div class="col-5">课程类别   {{lesson.course.type_base}}</div>
+            <div class="col-5">教学类型   {{lesson.course.type_teaching_method}}</div>
+            <div class="col-5">选课类型   {{lesson.course.type_join_type}}</div>
+            <div class="col-5">课程层次   {{lesson.course.type_level}}</div>
+            <div class="col-5">开课单位   {{lesson.course.open_department}}</div>
+        </div>
+    </div>
+
+    <div class="mx-5 my-2">
+        <div class="row">
+            <div class="col-3">
+                <div class="border shadow my-2">
+                    <div class="m-4">
+                        <h4> 考试安排   </h4>
+
+                        {% for exam in exams %}
+                        <div class="row">
+                            <div class="col">
+                                <p class="text-center"> {{exam.description}} </p>
+                            </div>
+                            <div class="col">
+                                <p class="text-center"> {{exam.start_time.date}} </p>
+                            </div>
+                            <div class="col">
+                                <p class="text-center"> {{exam.start_time.time}} - {{exam.end_time.time}} </p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="border shadow my-2">
+                    <div class="m-4">
+                        <h4> 课程公告 </h4>
+                        <p class="fw-light text-secondary">
+                            此内容来自用户编辑, 仅供参考.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="border shadow my-2">
+                    <div class="m-4">
+                        <h4> 课程简介 </h4>
+                        {{lesson.course.description}}
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col">
+                <div class="border shadow my-2">
+                    <div class="m-4">
+                        <h4> 作业 </h4>
+                        <p class="fw-light text-secondary">
+                            此内容来自用户编辑, 仅供参考.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="border shadow my-2">
+                    <div class="m-4">
+                        <h4> 上课时间 </h4>
+
+                        {% for lecture in lectures %}
+                        <div class="row">
+                            <div class="col">
+                                <p class="text-center"> {{lecture.location.room}} </p>
+                            </div>
+                            <div class="col">
+                                <p class="text-center"> {{lecture.start_time.date}} </p>
+                            </div>
+                            <div class="col">
+                                <p class="text-center"> {{lecture.start_time.time}} - {{lecture.end_time.time}} </p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
