@@ -9,10 +9,26 @@ from .models import *
 def course_view(request, id):
     course = get_object_or_404(Course, id=id)
     lessons = get_list_or_404(Lesson, course=course)
+
+    search = request.GET.get("search", "")
+
+    if search:
+        lessons = [
+            lesson
+            for lesson in lessons
+            if (search in lesson.code or search in lesson.teachers_name)
+        ]
+    else:
+        search = ""
+
     return render(
         request,
         "course.html",
-        {"course": course, "lessons": lessons},
+        {
+            "course": course,
+            "lessons": lessons,
+            "search": search,
+        },
     )
 
 

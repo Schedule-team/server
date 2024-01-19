@@ -137,3 +137,7 @@ class Lesson(models.Model):
 
     def __str__(self):
         return f"{self.course.name} ({self.code})"
+
+    @property
+    def teachers_name(self):
+        return ", ".join([teacher.name for teacher in self.teachers.all()])

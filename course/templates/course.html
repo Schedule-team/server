@@ -28,6 +28,19 @@
                     {{ course.description }}
                 </div>
             </div>
+
+            {% comment %} add serach box: {% endcomment %}
+            <div class="row mt-4">
+                <div class="col-4">
+                    <form action="{% url 'course' course.id %}" method="get">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="search" placeholder="课程号 or 教师名" value="{{ search }}">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <div class="row">
                 {% for lesson in lessons %}
                     <div class="col-3">
