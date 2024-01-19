@@ -21,8 +21,7 @@ class Course(models.Model):
     exam_type = models.CharField(max_length=20)  # 考核方式
     grading_type = models.CharField(max_length=20)  # 评分制 (五等级制/百分制/二等级制)
 
-    description = models.CharField(
-        max_length=1000, blank=True, null=True)  # 课程描述
+    description = models.CharField(max_length=1000, blank=True, null=True)  # 课程描述
     info = models.CharField(max_length=10000)  # json string for other info
 
     def __str__(self):
@@ -48,7 +47,7 @@ class Semester(models.Model):
 
     jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
 
-    code = models.CharField(max_length=20)  # 202301 (学年+学期)
+    code = models.CharField(max_length=20)  # 202301 (学年 + 学期)
     name = models.CharField(max_length=20)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -78,12 +77,13 @@ class Lesson(models.Model):
 
         lesson_info = models.ForeignKey("Lesson", on_delete=models.CASCADE)
 
-        teachers = models.ManyToManyField(Teacher)
+        teachers = models.ManyToManyField(Teacher, blank=True)
         start_time = models.DateTimeField()
         end_time = models.DateTimeField()
 
         location = models.ForeignKey(
-            Location, on_delete=models.CASCADE, blank=True, null=True)
+            Location, on_delete=models.CASCADE, blank=True, null=True
+        )
 
         def __str__(self):
             return f"{self.lesson_info.course.name} ({self.lesson_info.code}) {self.start_time} - {self.end_time}"
@@ -113,7 +113,7 @@ class Lesson(models.Model):
 
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    teachers = models.ManyToManyField(Teacher)
+    teachers = models.ManyToManyField(Teacher, blank=True)
 
     code = models.CharField(max_length=20)  # MATH001108.01 (长，一个课程一个课号)
     campus = models.CharField(max_length=20)  # 校区
@@ -123,10 +123,17 @@ class Lesson(models.Model):
         max_length=100, blank=True, null=True
     )  # 上课时间：1-12 周 5503: 1(8,9,10)
 
-    lectures = models.ManyToManyField(Lecture)
-    exams = models.ManyToManyField(Exam)
+    lectures = models.ManyToManyField(Lecture, blank=True)
+    exams = models.ManyToManyField(Exam, blank=True)
 
-    homepage_url = models.CharField(max_length=100)  # 课程主页
+    homepage_url = models.CharField(max_length=100, blank=True, null=True)  # 课程主页
+
+    notice_md_text = models.CharField(
+        max_length=10000, blank=True, null=True
+    )  # 课程公告 markdown 文本
+    homework_md_text = models.CharField(
+        max_length=10000, blank=True, null=True
+    )  # 课程作业 markdown 文本
 
     def __str__(self):
         return f"{self.course.name} ({self.code})"
