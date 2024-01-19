@@ -20,6 +20,10 @@
                 <div class="col-5">考核方式 {{ lesson.course.exam_type }}</div>
                 <div class="col-5">评分制 {{ lesson.course.grading_type }}</div>
             </div>
+            <div class="row my-4 fw-bold">
+                <div class="col-5">校区 {{ lesson.campus }}</div>
+                <div class="col-5">教师 {{ lesson.teachers_name }}</div>
+            </div>
             <div class="row fw-light">
                 <div class="col-5">课程类别 {{ lesson.course.type_base }}</div>
                 <div class="col-5">教学类型 {{ lesson.course.type_teaching_method }}</div>
@@ -76,6 +80,7 @@
                     <div class="border shadow my-2">
                         <div class="m-4">
                             <h4>上课时间</h4>
+                            <p class="fw-light text-secondary">{{ lesson.schedule_text }}</p>
                             {% for lecture in lectures %}
                                 <div class="row">
                                     <div class="col">
