@@ -65,6 +65,13 @@
                         <div class="m-4">
                             <h4>作业</h4>
                             <p class="fw-light text-secondary">此内容来自用户编辑，仅供参考。</p>
+                            <div id="homework_content"></div>
+                            <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js "></script>
+                            <script type="module">
+                                import {directive, directiveHtml} from 'https://esm.sh/micromark-extension-directive@3?bundle'
+                                import {micromark} from 'https://esm.sh/micromark@3?bundle'
+                                document.getElementById('homework_content').innerHTML = DOMPurify.sanitize(micromark('# Marked in the browser\n\nRendered by **marked**. \$\\frac\{1\}\{2\}\$'));
+                            </script>
                         </div>
                     </div>
                 </div>
