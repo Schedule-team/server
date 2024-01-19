@@ -12,33 +12,47 @@ def course_view(request, id):
     return render(
         request,
         "course.html",
-        {
-            "course": course,
-            "lessons": lessons
-        },
+        {"course": course, "lessons": lessons},
     )
 
 
 def lesson_view(request, id):
     lesson = get_object_or_404(Lesson, id=id)
-    lectures = Lesson.Lecture.objects.filter(lesson_info=lesson).order_by("start_time").reverse()
+    lectures = (
+        Lesson.Lecture.objects.filter(lesson_info=lesson)
+        .order_by("start_time")
+        .reverse()
+    )
     exams = Lesson.Exam.objects.filter(lesson_info=lesson)
+
+    teachers = lesson.teachers.all()
+    if len(teachers) == 0:
+        have_teacher = False
+        teacher_name = ""
+        teacher_id = ""
+    else:
+        have_teacher = True
+        teacher_name = teachers[0].name
+        teacher_id = teachers[0].id
+
     return render(
         request,
         "lesson.html",
         {
             "lesson": lesson,
             "lectures": lectures,
-            "exams": exams
+            "exams": exams,
+            "have_teacher": have_teacher,
+            "teacher_id": teacher_id,
+            "teacher_name": teacher_name,
         },
     )
+
 
 def teacher_view(request, id):
     teacher = get_object_or_404(Teacher, id=id)
     return render(
         request,
         "teacher.html",
-        {
-            "teacher": teacher
-        },
+        {"teacher": teacher},
     )

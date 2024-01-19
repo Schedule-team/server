@@ -6,8 +6,10 @@
                 <div class="col-5">
                     <a class="text-white fs-1 fw-bold"
                        href="{% url 'course' lesson.course.id %}">{{ lesson.course.name }}</a>
-                    <a class="text-white fs-1 fw-light p-2"
-                       href="{% url 'teacher' lesson.teachers.first.id %}">{{ lesson.teachers.first.name }}</a>
+                    {% if have_teacher %}
+                        <a class="text-white fs-1 fw-light p-2"
+                           href="{% url 'teacher' teacher_id %}">{{ teacher_name }}</a>
+                    {% endif %}
                 </div>
                 <div class="col-5"></div>
                 <div class="col-5">{{ lesson.semester.name }} / {{ lesson.code }}</div>
