@@ -7,7 +7,7 @@
             <div class="col-5 text-white fs-1 fw-bold">课程列表</div>
             <div class="col-5"></div>
             <div class="col-5">在此处可寻找所有课程，以及对应开设的课堂</div>
-        </div>
+        </div>`
     </div>
 
     <div class="mx-5 my-2">
@@ -22,6 +22,8 @@
                     // auto submit:
                     $(document).ready(function () {
                         $('#query').change(function () {
+                            // set pn to 1 when query changes
+                            $('#pn').val(1);
                             $(this).submit();
                         });
                         $(':input').on(function () {

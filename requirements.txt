@@ -6,3 +6,4 @@ requests
 datetime
 tqdm
 django-bootstrap-v5
+psycopg2

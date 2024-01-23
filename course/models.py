@@ -21,8 +21,8 @@ class Course(models.Model):
     exam_type = models.CharField(max_length=20)  # 考核方式
     grading_type = models.CharField(max_length=20)  # 评分制 (五等级制/百分制/二等级制)
 
-    description = models.CharField(max_length=1000, blank=True, null=True)  # 课程描述
-    info = models.CharField(max_length=10000)  # json string for other info
+    description = models.TextField(blank=True, null=True)  # 课程描述
+    info = models.TextField()  # json string for other info
 
     def __str__(self):
         return f"{self.name} ({self.code})"
@@ -33,10 +33,10 @@ class Teacher(models.Model):
 
     jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID, 识别教师用 (重名)
 
-    name = models.CharField(max_length=20)
-    email = models.CharField(max_length=100, blank=True, null=True)
-    office_location = models.CharField(max_length=100, blank=True, null=True)
-    homepage_url = models.CharField(max_length=100, blank=True, null=True)
+    name = models.TextField()
+    email = models.TextField(blank=True, null=True)
+    office_location = models.TextField(blank=True, null=True)
+    homepage_url = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.email})"
@@ -99,7 +99,7 @@ class Lesson(models.Model):
         start_time = models.DateTimeField()
         end_time = models.DateTimeField()
 
-        description = models.CharField(max_length=1000)  # 考试描述，例如 开卷/闭卷 注意事项等
+        description = models.TextField()  # 考试描述，例如 开卷/闭卷 注意事项等
 
         # location = models.ForeignKey(Location, on_delete=models.CASCADE)
         locations = models.ManyToManyField(Location, blank=True)
@@ -119,20 +119,20 @@ class Lesson(models.Model):
     campus = models.CharField(max_length=20)  # 校区
     start_week = models.IntegerField(blank=True, null=True)  # 开始周
     end_week = models.IntegerField(blank=True, null=True)  # 结束周
-    schedule_text = models.CharField(
-        max_length=100, blank=True, null=True
+    schedule_text = models.TextField(
+        blank=True, null=True
     )  # 上课时间：1-12 周 5503: 1(8,9,10)
 
     lectures = models.ManyToManyField(Lecture, blank=True)
     exams = models.ManyToManyField(Exam, blank=True)
 
-    homepage_url = models.CharField(max_length=100, blank=True, null=True)  # 课程主页
+    homepage_url = models.TextField(blank=True, null=True)  # 课程主页
 
-    notice_md_text = models.CharField(
-        max_length=10000, blank=True, null=True
+    notice_md_text = models.TextField(
+        blank=True, null=True
     )  # 课程公告 markdown 文本
-    homework_md_text = models.CharField(
-        max_length=10000, blank=True, null=True
+    homework_md_text = models.TextField(
+        blank=True, null=True
     )  # 课程作业 markdown 文本
 
     def __str__(self):
