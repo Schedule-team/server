@@ -1,63 +1,86 @@
 {% extends "base.html" %}
 {% block content %}
-    <div>
-        <div class="container-fluid p-5 bg-primary text-white text-start">
-            <div class="row">
-                <a class="col-5 text-white fs-1 fw-bold">{{ course.name }}</a>
-                <div class="col-5"></div>
-                <div class="col-5">{{ course.code }}</div>
-            </div>
-            <div class="row my-4 fw-bold">
-                <div class="col-5">学分 {{ course.credits }}</div>
-                <div class="col-5">学时 {{ course.period }}</div>
-                <div class="col-5">考核方式 {{ course.exam_type }}</div>
-                <div class="col-5">评分制 {{ course.grading_type }}</div>
-            </div>
-            <div class="row fw-light">
-                <div class="col-5">课程类别 {{ course.type_base }}</div>
-                <div class="col-5">教学类型 {{ course.type_teaching_method }}</div>
-                <div class="col-5">选课类型 {{ course.type_join_type }}</div>
-                <div class="col-5">课程层次 {{ course.type_level }}</div>
-                <div class="col-5">开课单位 {{ course.open_department }}</div>
-            </div>
+<div>
+    <div class="container-fluid p-5 bg-primary text-white text-start">
+        <div class="row">
+            <a class="col-5 text-white fs-1 fw-bold">{{ course.name }}</a>
+            <div class="col-5"></div>
+            <div class="col-5">{{ course.code }}</div>
         </div>
-        <div class="mx-5 my-2">
-            <div class="border shadow my-2">
-                <div class="m-4">
-                    <h4>课程简介</h4>
-                    {{ course.description }}
-                </div>
-            </div>
-
-            {% comment %} add serach box: {% endcomment %}
-            <div class="row mt-4">
-                <div class="col-4">
-                    <form action="{% url 'course' course.id %}" method="get">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="search" placeholder="课程号 or 教师名" value="{{ search }}">
-                            <button class="btn btn-outline-secondary" type="submit">Search</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="row">
-                {% for lesson in lessons %}
-                    <div class="col-3">
-                        <div class="card shadow my-3">
-                            <div class="card-header">{{ lesson.semester.name }} - {{ lesson.teachers.first.name }}</div>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item">课程号 {{ lesson.code }}</li>
-                                <!-- <li class="list-group-item">{{lesson.schedule_text}}</li> -->
-                                <li class="list-group-item">校区 {{ lesson.campus }}</li>
-                                <li class="list-group-item">
-                                    <a href="{% url 'lesson' lesson.id %}" class="link-primary">More</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+        <div class="row my-4 fw-bold">
+            <div class="col-5">学分 {{ course.credits }}</div>
+            <div class="col-5">学时 {{ course.period }}</div>
+            <div class="col-5">考核方式 {{ course.exam_type }}</div>
+            <div class="col-5">评分制 {{ course.grading_type }}</div>
+        </div>
+        <div class="row fw-light">
+            <div class="col-5">课程类别 {{ course.type_base }}</div>
+            <div class="col-5">教学类型 {{ course.type_teaching_method }}</div>
+            <div class="col-5">选课类型 {{ course.type_join_type }}</div>
+            <div class="col-5">课程层次 {{ course.type_level }}</div>
+            <div class="col-5">开课单位 {{ course.open_department }}</div>
         </div>
     </div>
+    <div class="mx-5 my-2">
+        <div class="border shadow my-2">
+            <div class="m-4">
+                <h4>课程简介</h4>
+                {{ course.description }}
+            </div>
+        </div>
+
+        {% comment %} serach box: {% endcomment %}
+
+        <div class="my-3">
+            <form action="{% url 'course' course.id %}" method="get" id="query">
+                <div class="d-flex w-25">
+                    <select class="form-select" name="semester">
+                        <option value=""> 全部学期 </option>
+                        {% for semester in semesters %}
+                        {% if semester.id == semester_id %}
+                        <option value="{{ semester.id }}" selected>{{ semester.name }}</option>
+                        {% else %}
+                        <option value="{{ semester.id }}">{{ semester.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+
+                    <input type="text" class="form-control mx-4" name="name" placeholder="课程号 or 教师名" value="{{ name }}">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            // auto submit:
+            $(document).ready(function () {
+                $('#query').change(function () {
+                    $(this).submit();
+                });
+            });
+        </script>
+
+        <div class="row">
+            {% for lesson in lessons %}
+            <div class="col-3">
+                <div class="card shadow my-3">
+                    <div class="card-header">
+                        <a href="{% url 'lesson' lesson.id %}" class="link-primary">
+                            {% if lesson.teachers_name|length %}
+                            {{ lesson.semester.name }} - {{ lesson.teachers_name }}
+                            {% else %}
+                            {{ lesson.semester.name }}
+                            {% endif %}
+                        </a>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">课程号 {{ lesson.code }}</li>
+                        <li class="list-group-item">校区 {{ lesson.campus }}</li>
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock content %}

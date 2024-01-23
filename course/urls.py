@@ -11,6 +11,8 @@ urlpatterns = [
     path("api/semester/", api.query_semester_all, name="api_semester_all"),
     path("api/semester/<int:id>", api.query_semester, name="api_semester"),
     #
+    path("", views.index_view, name="index"),
+    path("course", views.course_all, name="course_all"),
     path("course/<int:id>", views.course_view, name="course"),
     path("lesson/<int:id>", views.lesson_view, name="lesson"),
     path("teacher/<int:id>", views.teacher_view, name="teacher"),

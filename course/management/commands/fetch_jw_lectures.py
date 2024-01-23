@@ -11,6 +11,7 @@ cookie = ""
 headers = {}
 
 GROUP_SIZE = 20
+MAX_RETRIES = 5
 
 
 async def handle_room(json) -> Location:
@@ -58,18 +59,27 @@ async def handle_lecture(json) -> Lesson.Lecture:
 
 async def update_lessons(lesson_ids, semaphores, progress, session):
     async with semaphores:
-        data = {
-            "lessonIds": lesson_ids,
-        }
-        r = await session.post(
-            url="https://jw.ustc.edu.cn/ws/schedule-table/datum",
-            json=data,
-            headers=headers,
-        )
-        json = (await r.json())["result"]["scheduleList"]
-        for sub_json in json:
-            await handle_lecture(sub_json)
-        progress.update(len(lesson_ids))
+        for i in range(MAX_RETRIES):
+            try:
+                data = {
+                    "lessonIds": lesson_ids,
+                }
+                r = await session.post(
+                    url="https://jw.ustc.edu.cn/ws/schedule-table/datum",
+                    json=data,
+                    headers=headers,
+                )
+                json = (await r.json())["result"]["scheduleList"]
+                for sub_json in json:
+                    await handle_lecture(sub_json)
+                progress.update(len(lesson_ids))
+                break
+            except Exception as e:
+                print(e)
+                print("Retrying...")
+                await asyncio.sleep(1)
+        else:
+            print("Failed")
 
 
 async def main(lesson_ids):
@@ -95,7 +105,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # lesson_ids = list(Lesson.objects.all().values_list("jw_id", flat=True))
         lesson_ids = list(Lesson.objects.all()
-                          .filter(semester_id="64")
+                        #   .filter(semester_id="65")
                           .values_list("jw_id", flat=True))
         print(len(lesson_ids))
 

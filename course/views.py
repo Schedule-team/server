@@ -6,20 +6,75 @@ from django.forms.models import model_to_dict
 from .models import *
 
 
+def index_view(request):
+    return render(request, "index.html")
+
+
+def course_all(request):
+    PAGE_SIZE = 20
+
+    pn = int(request.GET.get("pn", 1))
+    name = request.GET.get("name", "")
+    # semester_id = request.GET.get("semester", "")
+
+    courses = list(Course.objects.all())
+
+    if len(name):
+        name = name.strip()
+        courses = list(filter(lambda course: name in course.name or name in course.code, courses))
+
+    # if len(semester_id):
+    #     semester_id = int(semester_id)
+    #     course = filter(
+    #         lambda course: course.semester.id == semester_id,
+    #         course,
+    #     )
+
+    total = len(courses)
+    courses = courses[(int(pn) - 1) * PAGE_SIZE: int(pn) * PAGE_SIZE]
+
+    # semesters = sorted(list(Semester.objects.all()),
+    #                    key=lambda x: x.name, reverse=True)
+
+    return render(
+        request,
+        "course_all.html",
+        {
+            "courses": courses,
+            "pn": int(pn),
+            "pn_max": int(total / PAGE_SIZE) + 1,
+            "total": total,
+            "name": name,
+            # "semesters": semesters,
+            # "semester_id": semester_id
+        },
+    )
+
+
 def course_view(request, id):
     course = get_object_or_404(Course, id=id)
     lessons = get_list_or_404(Lesson, course=course)
+    semesters = sorted(list(dict.fromkeys(
+        list(map(lambda lesson: lesson.semester, lessons)))), key=lambda x: x.name, reverse=True)
 
-    search = request.GET.get("search", "")
+    name = request.GET.get("name", "")
+    semester_id = request.GET.get("semester", "")
 
-    if search:
-        lessons = [
-            lesson
-            for lesson in lessons
-            if (search in lesson.code or search in lesson.teachers_name)
-        ]
+    if len(name):
+        name = name.strip()
+        lessons = filter(
+            lambda lesson: name in lesson.code or name in lesson.teachers_name,
+            lessons,
+        )
+
+    if len(semester_id):
+        semester_id = int(semester_id)
+        lessons = filter(
+            lambda lesson: lesson.semester.id == semester_id,
+            lessons,
+        )
     else:
-        search = ""
+        semester_id = ""
 
     return render(
         request,
@@ -27,7 +82,9 @@ def course_view(request, id):
         {
             "course": course,
             "lessons": lessons,
-            "search": search,
+            "name": name,
+            "semester_id": semester_id,
+            "semesters": semesters
         },
     )
 
@@ -41,14 +98,10 @@ def lesson_view(request, id):
     )
     exams = Lesson.Exam.objects.filter(lesson_info=lesson)
 
-    teachers = lesson.teachers.all()
-    if len(teachers) == 0:
-        have_teacher = False
-        teacher_name = ""
-        teacher_id = ""
-    else:
-        have_teacher = True
-        teacher_name = teachers[0].name
+    teachers = list(lesson.teachers.all())
+
+    teacher_id = ""
+    if teachers:
         teacher_id = teachers[0].id
 
     return render(
@@ -58,9 +111,7 @@ def lesson_view(request, id):
             "lesson": lesson,
             "lectures": lectures,
             "exams": exams,
-            "have_teacher": have_teacher,
             "teacher_id": teacher_id,
-            "teacher_name": teacher_name,
         },
     )
 

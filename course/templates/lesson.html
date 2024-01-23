@@ -6,9 +6,9 @@
                 <div class="col-5">
                     <a class="text-white fs-1 fw-bold"
                        href="{% url 'course' lesson.course.id %}">{{ lesson.course.name }}</a>
-                    {% if have_teacher %}
+                    {% if lesson.teachers_name|length %}
                         <a class="text-white fs-1 fw-light p-2"
-                           href="{% url 'teacher' teacher_id %}">{{ teacher_name }}</a>
+                           href="{% url 'teacher' teacher_id %}">{{ lesson.teachers_name }}</a>
                     {% endif %}
                 </div>
                 <div class="col-5"></div>
@@ -99,7 +99,6 @@
                 </div>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js "></script>
         <script type="module">
             import {directive, directiveHtml} from 'https://esm.sh/micromark-extension-directive@3?bundle'
             import {micromark} from 'https://esm.sh/micromark@3?bundle'
