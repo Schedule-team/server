@@ -4,7 +4,6 @@ services:
   schedule:
     container_name: schedule
     hostname: schedule
-    build: .
     image: ghcr.io/schedule-team/server:latest
     ports:
       - "8000:8000"
