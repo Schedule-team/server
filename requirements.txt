@@ -7,3 +7,6 @@ datetime
 tqdm
 django-bootstrap-v5
 psycopg2
+uvicorn
+gunicorn
+python-dotenv
