@@ -4,22 +4,22 @@ from django.db import models
 class Course(models.Model):
     id = models.AutoField(primary_key=True)
 
-    jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
+    jw_id = models.TextField(unique=True)  # 教务系统 ID
 
     # 课程编号 MATH001108 (短，多个课程共用)
-    code = models.CharField(unique=True, max_length=20)
-    name = models.CharField(max_length=20)  # 课程名
+    code = models.TextField(unique=True)
+    name = models.TextField()  # 课程名
     period = models.IntegerField()  # 学时
     credits = models.FloatField()  # 学分
 
-    type_base = models.CharField(max_length=20)  # 课程类别
-    type_teaching_method = models.CharField(max_length=20)  # 教学类型
-    type_join_type = models.CharField(max_length=20)  # 选课类型
-    type_level = models.CharField(max_length=20)  # 课程层次
-    open_department = models.CharField(max_length=20)  # 开课单位
+    type_base = models.TextField()  # 课程类别
+    type_teaching_method = models.TextField()  # 教学类型
+    type_join_type = models.TextField()  # 选课类型
+    type_level = models.TextField()  # 课程层次
+    open_department = models.TextField()  # 开课单位
 
-    exam_type = models.CharField(max_length=20)  # 考核方式
-    grading_type = models.CharField(max_length=20)  # 评分制 (五等级制/百分制/二等级制)
+    exam_type = models.TextField()  # 考核方式
+    grading_type = models.TextField()  # 评分制 (五等级制/百分制/二等级制)
 
     description = models.TextField(blank=True, null=True)  # 课程描述
     info = models.TextField()  # json string for other info
@@ -31,7 +31,7 @@ class Course(models.Model):
 class Teacher(models.Model):
     id = models.AutoField(primary_key=True)
 
-    jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID, 识别教师用 (重名)
+    jw_id = models.TextField(unique=True)  # 教务系统 ID, 识别教师用 (重名)
 
     name = models.TextField()
     email = models.TextField(blank=True, null=True)
@@ -45,10 +45,10 @@ class Teacher(models.Model):
 class Semester(models.Model):
     id = models.AutoField(primary_key=True)
 
-    jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
+    jw_id = models.TextField(unique=True)  # 教务系统 ID
 
-    code = models.CharField(max_length=20)  # 202301 (学年 + 学期)
-    name = models.CharField(max_length=20)
+    code = models.TextField()  # 202301 (学年 + 学期)
+    name = models.TextField()
     start_date = models.DateField()
     end_date = models.DateField()
 
@@ -59,11 +59,11 @@ class Semester(models.Model):
 class Location(models.Model):
     id = models.AutoField(primary_key=True)
 
-    jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
+    jw_id = models.TextField(unique=True)  # 教务系统 ID
 
-    campus = models.CharField(max_length=20)
-    building = models.CharField(max_length=20)
-    room = models.CharField(max_length=20)
+    campus = models.TextField()
+    building = models.TextField()
+    room = models.TextField()
 
     def __str__(self):
         return f"{self.campus} {self.building} {self.room}"
@@ -73,7 +73,7 @@ class Lesson(models.Model):
     class Lecture(models.Model):
         id = models.AutoField(primary_key=True)
 
-        # jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
+        # jw_id = models.TextField(unique=True)  # 教务系统 ID
 
         lesson_info = models.ForeignKey("Lesson", on_delete=models.CASCADE)
 
@@ -91,10 +91,10 @@ class Lesson(models.Model):
     class Exam(models.Model):
         id = models.AutoField(primary_key=True)
 
-        jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
+        jw_id = models.TextField(unique=True)  # 教务系统 ID
 
         lesson_info = models.ForeignKey("Lesson", on_delete=models.CASCADE)
-        type = models.CharField(max_length=20)  # 考试类型：期中考试/期末考试/补考
+        type = models.TextField()  # 考试类型：期中考试/期末考试/补考
 
         start_time = models.DateTimeField()
         end_time = models.DateTimeField()
@@ -109,14 +109,14 @@ class Lesson(models.Model):
 
     id = models.AutoField(primary_key=True)
 
-    jw_id = models.CharField(unique=True, max_length=20)  # 教务系统 ID
+    jw_id = models.TextField(unique=True)  # 教务系统 ID
 
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     teachers = models.ManyToManyField(Teacher, blank=True)
 
-    code = models.CharField(max_length=20)  # MATH001108.01 (长，一个课程一个课号)
-    campus = models.CharField(max_length=20)  # 校区
+    code = models.TextField()  # MATH001108.01 (长，一个课程一个课号)
+    campus = models.TextField()  # 校区
     start_week = models.IntegerField(blank=True, null=True)  # 开始周
     end_week = models.IntegerField(blank=True, null=True)  # 结束周
     schedule_text = models.TextField(
