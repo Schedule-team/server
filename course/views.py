@@ -10,7 +10,7 @@ def index_view(request):
 def course_all(request):
     PAGE_SIZE = 20
 
-    pn = int(request.GET.get("pn", 1))
+    pn = int(request.GET.get("pn", 1) or 1)
     name = request.GET.get("name", "")
     # semester_id = request.GET.get("semester", "")
 
