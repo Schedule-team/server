@@ -9,7 +9,7 @@
             <div>
                 <div>
                     <a class="text-white fs-1 fw-bold"
-                       href="{% url 'course' lesson.course.id %}">{{ lesson.course.name }}</a>
+                       href="{% url 'course' lesson.course.jw_id %}">{{ lesson.course.name }}</a>
                     {% if lesson.teachers_name|length %}
                         <a class="text-white fs-1 fw-light p-2"
                            href="{% url 'teacher' teacher_id %}">{{ lesson.teachers_name }}</a>

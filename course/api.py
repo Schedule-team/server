@@ -27,7 +27,7 @@ def query_course_all(request):
 
 
 def query_course(request, id):
-    course = get_object_or_404(Course, id=id)
+    course = get_object_or_404(Course, jw_id=id)
     return JsonResponse({"course": model_to_dict(course)})
 
 
@@ -37,7 +37,7 @@ def query_teacher_all(request):
 
 
 def query_teacher(request, id):
-    teacher = get_object_or_404(Teacher, id=id)
+    teacher = get_object_or_404(Teacher, jw_id=id)
 
     # fetch all lesson that this teacher teaches, which have a many-to-many relationship with Teacher
     lessons = teacher.lesson_set.all()
@@ -58,7 +58,7 @@ def query_semester_all(request):
 
 
 def query_semester(request, id):
-    semester = get_object_or_404(Semester, id=id)
+    semester = get_object_or_404(Semester, jw_id=id)
     return JsonResponse({"semester": model_to_dict(semester)})
 
 
@@ -68,5 +68,5 @@ def query_lesson_all(request):
 
 
 def query_lesson(request, id):
-    lesson = get_object_or_404(Lesson, id=id)
+    lesson = get_object_or_404(Lesson, jw_id=id)
     return JsonResponse({"lesson": model_to_dict_for_lesson(lesson)})
