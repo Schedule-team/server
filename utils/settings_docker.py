@@ -10,11 +10,12 @@ SECRET_KEY = str(os.getenv("DJANGO_SECRET_KEY"))
 DEBUG = False
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_PRELOAD = True
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 ALLOWED_HOSTS = ["schedule-test.tiankaima.dev"]
+CSRF_TRUSTED_ORIGINS = ["https://schedule-test.tiankaima.dev"]
 
 DATABASES = {
     "default": {
