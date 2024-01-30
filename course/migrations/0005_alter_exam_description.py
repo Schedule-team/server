@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('course', '0004_alter_lesson_homepage_url_and_more'),
     ]

@@ -90,7 +90,8 @@
                                         <p class="text-center">{{ lecture.start_time.date }}</p>
                                     </div>
                                     <div class="col">
-                                        <p class="text-center">{{ lecture.start_time.time }} - {{ lecture.end_time.time }}</p>
+                                        <p class="text-center">{{ lecture.start_time.time }}
+                                            - {{ lecture.end_time.time }}</p>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -102,6 +103,7 @@
         <script type="module">
             import {directive, directiveHtml} from 'https://esm.sh/micromark-extension-directive@3?bundle'
             import {micromark} from 'https://esm.sh/micromark@3?bundle'
+
             document.getElementById('homework_content').innerHTML = DOMPurify.sanitize(micromark('{{ lesson.homework_md_text }}'));
             document.getElementById('notice_content').innerHTML = DOMPurify.sanitize(micromark('{{ lesson.notice_md_text }}'));
         </script>

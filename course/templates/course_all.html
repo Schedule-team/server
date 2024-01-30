@@ -1,83 +1,85 @@
 {% extends "base.html" %}
 {% block content %}
-<div>
-    <div class="container-fluid p-5 bg-primary text-white text-start">
-        <!-- TODO: could some white pic be added here? I thought this could have been nice -->
-        <div class="row">
-            <div class="col-5 text-white fs-1 fw-bold">课程列表</div>
-            <div class="col-5"></div>
-            <div class="col-5">在此处可寻找所有课程，以及对应开设的课堂</div>
-        </div>`
-    </div>
-
-    <div class="mx-5 my-2">
-        <form action="{% url 'course_all' %}" method="get" id="query">
-            <div class="d-flex justify-content-between">
-                <div class="d-flex">
-                    <input type="text" class="form-control" id="query_name" name="name" placeholder="课程名 or 课程号"
-                        value="{{ name }}">
-                    <button class="btn btn-outline-secondary" type="submit" class="mx-4">Search</button>
-                </div>
-                <script>
-                    // auto submit:
-                    $(document).ready(function () {
-                        $('#query').change(function () {
-                            // set pn to 1 when query changes
-                            $('#pn').val(1);
-                            $(this).submit();
-                        });
-                        $(':input').on(function () {
-                            $(this).submit();
-                        });
-                    });
-                </script>
-
-                <div class="d-flex">
-                    <div>
-                        <a href="{% url 'course_all' %}" class="btn btn-outline-secondary mx-4">Reset</a>
-
-                    </div>
-                    <div class="d-flex">
-                        {% if pn > 1 %}
-                        <a href="{% url 'course_all' %}?pn={{ pn|add:'-1' }}&name={{ name }}"
-                            class="btn btn-outline-secondary">Prev</a>
-                        {% else %}
-                        <a class="btn btn-outline-secondary disabled">Prev</a>
-                        {% endif %}
-
-
-                        <input type="text" class="form-control d-inline-block mx-4 w-25" id="pn" name="pn"
-                            placeholder="{{ pn }} / {{ pn_max }}" value="{{ pn }}">
-
-                        {% if pn != pn_max %}
-                        <a href="{% url 'course_all' %}?pn={{ pn|add:'1' }}&name={{ name }}"
-                            class="btn btn-outline-secondary">Next</a>
-                        {% else %}
-                        <a class="btn btn-outline-secondary disabled">Next</a>
-                        {% endif %}
-                    </div>
-                </div>
-        </form>
-    </div>
-
-    <div class="row">
-        {% for course in courses %}
-        <div class="col-3">
-            <div class="card shadow my-3">
-                <div class="card-header">
-                    <a href="{% url 'course' course.id %}" class="link-primary">
-                        {{ course.name }}
-                    </a>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">课程号 {{ course.code }}</li>
-                    <li class="list-group-item">学时 {{ course.period }}</li>
-                    <li class="list-group-item">学分 {{ course.credits }}</li>
-                </ul>
+    <div>
+        <div class="container-fluid p-5 bg-primary text-white text-start">
+            <!-- TODO: could some white pic be added here? I thought this could have been nice -->
+            <div class="row">
+                <div class="col-5 text-white fs-1 fw-bold">课程列表</div>
+                <div class="col-5"></div>
+                <div class="col-5">在此处可寻找所有课程，以及对应开设的课堂</div>
             </div>
+            `
         </div>
-        {% endfor %}
+
+        <div class="mx-5 my-2">
+            <form action="{% url 'course_all' %}" method="get" id="query">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex">
+                        <input type="text" class="form-control" id="query_name" name="name"
+                               placeholder="课程名 or 课程号"
+                               value="{{ name }}">
+                        <button class="btn btn-outline-secondary" type="submit" class="mx-4">Search</button>
+                    </div>
+                    <script>
+                        // auto submit:
+                        $(document).ready(function () {
+                            $('#query').change(function () {
+                                // set pn to 1 when query changes
+                                $('#pn').val(1);
+                                $(this).submit();
+                            });
+                            $(':input').on(function () {
+                                $(this).submit();
+                            });
+                        });
+                    </script>
+
+                    <div class="d-flex">
+                        <div>
+                            <a href="{% url 'course_all' %}" class="btn btn-outline-secondary mx-4">Reset</a>
+
+                        </div>
+                        <div class="d-flex">
+                            {% if pn > 1 %}
+                                <a href="{% url 'course_all' %}?pn={{ pn|add:'-1' }}&name={{ name }}"
+                                   class="btn btn-outline-secondary">Prev</a>
+                            {% else %}
+                                <a class="btn btn-outline-secondary disabled">Prev</a>
+                            {% endif %}
+
+
+                            <input type="text" class="form-control d-inline-block mx-4 w-25" id="pn" name="pn"
+                                   placeholder="{{ pn }} / {{ pn_max }}" value="{{ pn }}">
+
+                            {% if pn != pn_max %}
+                                <a href="{% url 'course_all' %}?pn={{ pn|add:'1' }}&name={{ name }}"
+                                   class="btn btn-outline-secondary">Next</a>
+                            {% else %}
+                                <a class="btn btn-outline-secondary disabled">Next</a>
+                            {% endif %}
+                        </div>
+                    </div>
+            </form>
+        </div>
+
+        <div class="row">
+            {% for course in courses %}
+                <div class="col-3">
+                    <div class="card shadow my-3">
+                        <div class="card-header">
+                            <a href="{% url 'course' course.id %}" class="link-primary">
+                                {{ course.name }}
+                            </a>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">课程号 {{ course.code }}</li>
+                            <li class="list-group-item">学时 {{ course.period }}</li>
+                            <li class="list-group-item">学分 {{ course.credits }}</li>
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
-</div>
-</div>
+    </div>
 {% endblock content %}

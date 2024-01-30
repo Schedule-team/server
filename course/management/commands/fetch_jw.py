@@ -1,10 +1,11 @@
-import lxml.html
-import time
 import datetime
-import requests
 import json
+import time
 
-from django.core.management.base import BaseCommand, CommandError, CommandParser
+import lxml.html
+import requests
+from django.core.management.base import BaseCommand, CommandError
+
 from course.models import *
 
 # Update semesters: (before any input are given)

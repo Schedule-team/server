@@ -1,10 +1,8 @@
-import lxml.html
-import time
 import datetime
-import requests
-import json
 
-from django.core.management.base import BaseCommand, CommandError, CommandParser
+import requests
+from django.core.management.base import BaseCommand
+
 from course.models import *
 
 

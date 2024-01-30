@@ -1,10 +1,10 @@
-import datetime
 import asyncio
+import datetime
+
 import aiohttp
 import tqdm
+from django.core.management.base import BaseCommand, CommandError
 
-from asgiref.sync import sync_to_async
-from django.core.management.base import BaseCommand, CommandError, CommandParser
 from course.models import *
 
 cookie = ""
@@ -86,7 +86,7 @@ async def main(lesson_ids):
     async with aiohttp.ClientSession() as session:
         # group them into 50, to avoid too many requests:
         lesson_ids_grouped = [lesson_ids[i:i + GROUP_SIZE]
-                        for i in range(0, len(lesson_ids), GROUP_SIZE)]
+                              for i in range(0, len(lesson_ids), GROUP_SIZE)]
         # run them in parallel:
         semaphores = asyncio.Semaphore(10)
         progress = tqdm.tqdm(total=len(lesson_ids))
@@ -105,7 +105,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # lesson_ids = list(Lesson.objects.all().values_list("jw_id", flat=True))
         lesson_ids = list(Lesson.objects.all()
-                        #   .filter(semester_id="65")
+                          #   .filter(semester_id="65")
                           .values_list("jw_id", flat=True))
         print(len(lesson_ids))
 
