@@ -1,9 +1,14 @@
 {% extends "base.html" %}
+{% block title %}
+    {{ lesson.course.name }} - {{ lesson.code }}
+    - {{ lesson.teachers_name }} - {{ lesson.semester.name }} / Schedule 课堂主页
+{% endblock title %}
+
 {% block content %}
     <div>
         <div class="container-fluid p-5 bg-primary text-white text-start">
-            <div class="row">
-                <div class="col-5">
+            <div>
+                <div>
                     <a class="text-white fs-1 fw-bold"
                        href="{% url 'course' lesson.course.id %}">{{ lesson.course.name }}</a>
                     {% if lesson.teachers_name|length %}
@@ -11,30 +16,29 @@
                            href="{% url 'teacher' teacher_id %}">{{ lesson.teachers_name }}</a>
                     {% endif %}
                 </div>
-                <div class="col-5"></div>
-                <div class="col-5">{{ lesson.semester.name }} / {{ lesson.code }}</div>
+                <div>{{ lesson.semester.name }} / {{ lesson.code }}</div>
             </div>
             <div class="row my-4 fw-bold">
-                <div class="col-5">学分 {{ lesson.course.credits }}</div>
-                <div class="col-5">学时 {{ lesson.course.period }}</div>
-                <div class="col-5">考核方式 {{ lesson.course.exam_type }}</div>
-                <div class="col-5">评分制 {{ lesson.course.grading_type }}</div>
+                <div class="col-lg-6">学分 {{ lesson.course.credits }}</div>
+                <div class="col-lg-6">学时 {{ lesson.course.period }}</div>
+                <div class="col-lg-6">考核方式 {{ lesson.course.exam_type }}</div>
+                <div class="col-lg-6">评分制 {{ lesson.course.grading_type }}</div>
             </div>
             <div class="row my-4 fw-bold">
-                <div class="col-5">校区 {{ lesson.campus }}</div>
-                <div class="col-5">教师 {{ lesson.teachers_name }}</div>
+                <div class="col-lg-6">校区 {{ lesson.campus }}</div>
+                <div class="col-lg-6">教师 {{ lesson.teachers_name }}</div>
             </div>
             <div class="row fw-light">
-                <div class="col-5">课程类别 {{ lesson.course.type_base }}</div>
-                <div class="col-5">教学类型 {{ lesson.course.type_teaching_method }}</div>
-                <div class="col-5">选课类型 {{ lesson.course.type_join_type }}</div>
-                <div class="col-5">课程层次 {{ lesson.course.type_level }}</div>
-                <div class="col-5">开课单位 {{ lesson.course.open_department }}</div>
+                <div class="col-lg-6">课程类别 {{ lesson.course.type_base }}</div>
+                <div class="col-lg-6">教学类型 {{ lesson.course.type_teaching_method }}</div>
+                <div class="col-lg-6">选课类型 {{ lesson.course.type_join_type }}</div>
+                <div class="col-lg-6">课程层次 {{ lesson.course.type_level }}</div>
+                <div class="col-lg-6">开课单位 {{ lesson.course.open_department }}</div>
             </div>
         </div>
         <div class="mx-5 my-2">
             <div class="row">
-                <div class="col-3">
+                <div class="col">
                     <div class="border shadow my-2">
                         <div class="m-4">
                             <h4>考试安排</h4>
@@ -62,21 +66,13 @@
                     </div>
                     <div class="border shadow my-2">
                         <div class="m-4">
-                            <h4>课程简介</h4>
-                            {{ lesson.course.description }}
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="border shadow my-2">
-                        <div class="m-4">
                             <h4>作业</h4>
                             <p class="fw-light text-secondary">此内容来自用户编辑，仅供参考。</p>
                             <div id="homework_content"></div>
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-lg-4">
                     <div class="border shadow my-2">
                         <div class="m-4">
                             <h4>上课时间</h4>
@@ -95,6 +91,12 @@
                                     </div>
                                 </div>
                             {% endfor %}
+                        </div>
+                    </div>
+                    <div class="border shadow my-2">
+                        <div class="m-4">
+                            <h4>课程简介</h4>
+                            {{ lesson.course.description|safe }}
                         </div>
                     </div>
                 </div>
