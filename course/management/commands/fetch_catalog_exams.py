@@ -55,19 +55,19 @@ def run():
             if "lesson" not in json:
                 continue
 
-            type = json["examMode"]
-            if type == None:
-                type = ""
+            type = f"{json['examBatch']['name']} / {json['examMode']}"
 
             e, _ = Lesson.Exam.objects.update_or_create(
                 jw_id=json["id"],
-                #
-                lesson_info=Lesson.objects.get(jw_id=json["lesson"]["id"]),
-                type=type,
-                #
-                start_time=start_time,
-                end_time=end_time,
-                description=description,
+                defaults={
+                    #
+                    "lesson_info": Lesson.objects.get(jw_id=json["lesson"]["id"]),
+                    "type": type,
+                    #
+                    "start_time": start_time,
+                    "end_time": end_time,
+                    "description": description,
+                },
             )
 
             e.locations.set(locations)
