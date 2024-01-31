@@ -41,19 +41,23 @@
                     <div class="border shadow my-2">
                         <div class="m-4">
                             <h4>考试安排</h4>
-                            {% for exam in exams %}
-                                <div class="row">
-                                    <div class="col">
-                                        <p class="text-center">{{ exam.description }}</p>
+                            <div class="row">
+                                {% for exam in exams %}
+                                    <div class="col-lg-5">
+                                        <div class="card shadow my-3">
+                                            <div class="card-header">
+                                                {{ exam.type }}
+                                            </div>
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item">{{ exam.description }}</li>
+                                                <li class="list-group-item">{{ exam.start_time.date }}</li>
+                                                <li class="list-group-item">{{ exam.start_time.time }}
+                                                    - {{ exam.end_time.time }}</li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div class="col">
-                                        <p class="text-center">{{ exam.start_time.date }}</p>
-                                    </div>
-                                    <div class="col">
-                                        <p class="text-center">{{ exam.start_time.time }} - {{ exam.end_time.time }}</p>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                     <div class="border shadow my-2">
