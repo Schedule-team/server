@@ -34,7 +34,9 @@ export default {
         // 3. Create a POST call to example.com
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8'
+            },
             body: JSON.stringify(params),
         };
 
@@ -46,7 +48,7 @@ export default {
             }
             // Optionally, process the response data
             const responseData = await response.text();
-            message.setReject(`Successfully forwarded, response: ${JSON.stringify(params)}`);
+            message.setReject(`Successfully forwarded, response: ${responseData}`);
         } catch (error) {
             message.setReject(`Error sending POST request: ${error}`);
         }
