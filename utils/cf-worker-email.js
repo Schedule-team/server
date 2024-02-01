@@ -18,22 +18,22 @@ export default {
         const id = toAddress.split('-')[2];
 
         // convert raw (ReadableStream) to string
-        const rawString = await raw.text();
+        const rawString = await new Response(raw).text();
 
         // Prepare data for the POST request
         const params = {
             credential: `${env.CF_WORKER_CREDENTIAL}`,
-            id: id,
+            id: parseInt(id),
             field: field,
             value: rawString,
-            from: from,
-            timestamp: Date.now(),
+            from_: from,
+            timestamp: new Date().toISOString(),
         }
         console.log(params);
 
         // 3. Create a POST call to example.com
         const requestOptions = {
-            method: 'POST',
+            method: 'GET',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(params),
         };
@@ -45,10 +45,10 @@ export default {
                 message.setReject(`Server responded with status: ${response.status}`);
             }
             // Optionally, process the response data
-            const responseData = await response.json();
-            message.setReject('Successfully forwarded:', responseData);
+            const responseData = await response.text();
+            message.setReject(`Successfully forwarded, response: ${JSON.stringify(params)}`);
         } catch (error) {
-            message.setReject('Error sending POST request:', error);
+            message.setReject(`Error sending POST request: ${error}`);
         }
     },
 };

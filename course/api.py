@@ -115,7 +115,7 @@ def cf_email_worker(request):
     }
     """
 
-    form = CFEmailWorkerForm(request.GET)
+    form = CFEmailWorkerForm(request.POST)
     if not form.is_valid():
         return JsonResponse({"error": "invalid form"})
 
