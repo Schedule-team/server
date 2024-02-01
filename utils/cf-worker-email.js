@@ -33,7 +33,7 @@ export default {
 
         // 3. Create a POST call to example.com
         const requestOptions = {
-            method: 'GET',
+            method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(params),
         };

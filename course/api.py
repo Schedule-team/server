@@ -1,3 +1,4 @@
+import json
 import os
 
 from django import forms
@@ -115,32 +116,31 @@ def cf_email_worker(request):
     }
     """
 
-    form = CFEmailWorkerForm(request.POST)
-    if not form.is_valid():
-        return JsonResponse({"error": "invalid form"})
+    body = request.body.decode("utf-8")
+    form = json.loads(body)
 
-    if form.cleaned_data["credential"] != CF_WORKER_CREDENTIAL:
+    if form["credential"] != CF_WORKER_CREDENTIAL:
         return JsonResponse({"error": "invalid credential"})
 
-    id = form.cleaned_data["id"]
+    id = form["id"]
     lesson = get_object_or_404(Lesson, jw_id=id)
 
-    field = form.cleaned_data["field"]
-    value = form.cleaned_data["value"]
+    field = form["field"]
+    value = form["value"]
 
     if field == "notice":
         notice = lesson.notice_md_text
         if notice:
             notice.update(
                 text=value,
-                last_modified=form.cleaned_data["timestamp"],
-                last_modified_by=form.cleaned_data["from_"],
+                last_modified=form["timestamp"],
+                last_modified_by=form["from_"],
             )
         else:
             notice = EditableTextModel(
                 text=value,
-                last_modified=form.cleaned_data["timestamp"],
-                last_modified_by=form.cleaned_data["from_"],
+                last_modified=form["timestamp"],
+                last_modified_by=form["from_"],
             )
             notice.save()
             lesson.notice_md_text = notice
@@ -152,14 +152,14 @@ def cf_email_worker(request):
         if homework:
             homework.update(
                 text=value,
-                last_modified=form.cleaned_data["timestamp"],
-                last_modified_by=form.cleaned_data["from_"],
+                last_modified=form["timestamp"],
+                last_modified_by=form["from_"],
             )
         else:
             homework = EditableTextModel(
                 text=value,
-                last_modified=form.cleaned_data["timestamp"],
-                last_modified_by=form.cleaned_data["from_"],
+                last_modified=form["timestamp"],
+                last_modified_by=form["from_"],
             )
             homework.save()
             lesson.homework_md_text = homework
