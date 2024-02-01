@@ -11,3 +11,4 @@ uvicorn
 gunicorn
 python-dotenv
 whitenoise
+mail-parser

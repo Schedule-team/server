@@ -1,6 +1,7 @@
 import json
 import os
 
+import mailparser
 from django import forms
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
@@ -126,7 +127,9 @@ def cf_email_worker(request):
     lesson = get_object_or_404(Lesson, jw_id=id)
 
     field = form["field"]
-    value = form["value"]
+    value = mailparser.parse_from_string(form["value"]).body
+    if not value:
+        value = form["value"]
 
     if field == "notice":
         notice = lesson.notice_md_text
