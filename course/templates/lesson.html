@@ -64,14 +64,14 @@
                         <div class="m-4">
                             <h4>课程公告</h4>
                             <p class="fw-light text-secondary">此内容来自用户编辑，仅供参考。</p>
-                            <div id="notice_content"></div>
+                            {{ lesson.notice_md_text }}
                         </div>
                     </div>
                     <div class="border shadow my-2">
                         <div class="m-4">
                             <h4>作业</h4>
                             <p class="fw-light text-secondary">此内容来自用户编辑，仅供参考。</p>
-                            <div id="homework_content"></div>
+                            {{ lesson.homework_md_text }}
                         </div>
                     </div>
                 </div>
@@ -105,12 +105,5 @@
                 </div>
             </div>
         </div>
-        <script type="module">
-            import {directive, directiveHtml} from 'https://esm.sh/micromark-extension-directive@3?bundle'
-            import {micromark} from 'https://esm.sh/micromark@3?bundle'
-
-            document.getElementById('homework_content').innerHTML = DOMPurify.sanitize(micromark('{{ lesson.homework_md_text }}'));
-            document.getElementById('notice_content').innerHTML = DOMPurify.sanitize(micromark('{{ lesson.notice_md_text }}'));
-        </script>
     </div>
 {% endblock content %}
