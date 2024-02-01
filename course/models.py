@@ -12,12 +12,12 @@ class EditableTextModel(models.Model):
     def __str__(self):
         return f"{self.text}"
 
-    def update(self, text, last_modifed, last_modified_by):
+    def update(self, text, last_modified, last_modified_by):
         self.text = text
-        self.last_modified = last_modifed
+        self.last_modified = last_modified
         self.last_modified_by = last_modified_by
         self.history = f"""
-        {last_modified_by} @ {last_modifed} : 
+        {last_modified_by} @ {last_modified} :
         
         {text}
         ==========

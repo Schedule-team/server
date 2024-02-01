@@ -4,8 +4,12 @@ from django import forms
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from dotenv import load_dotenv
 
 from .models import *
+
+load_dotenv()
 
 # this would be set in .env file, loaded by docker-compose
 CF_WORKER_CREDENTIAL = os.environ.get("CF_WORKER_CREDENTIAL")
@@ -27,21 +31,25 @@ def model_to_dict_for_lesson(lesson):
     }
 
 
+@csrf_exempt
 def query_course_all(request):
     courses = Course.objects.all()
     return JsonResponse({"courses": list(courses.values())})
 
 
+@csrf_exempt
 def query_course(request, id):
     course = get_object_or_404(Course, jw_id=id)
     return JsonResponse({"course": model_to_dict(course)})
 
 
+@csrf_exempt
 def query_teacher_all(request):
     teachers = Teacher.objects.all()
     return JsonResponse({"teachers": list(teachers.values())})
 
 
+@csrf_exempt
 def query_teacher(request, id):
     teacher = get_object_or_404(Teacher, jw_id=id)
 
@@ -58,21 +66,25 @@ def query_teacher(request, id):
     )
 
 
+@csrf_exempt
 def query_semester_all(request):
     semesters = Semester.objects.all()
     return JsonResponse({"semesters": list(semesters.values())})
 
 
+@csrf_exempt
 def query_semester(request, id):
     semester = get_object_or_404(Semester, jw_id=id)
     return JsonResponse({"semester": model_to_dict(semester)})
 
 
+@csrf_exempt
 def query_lesson_all(request):
     lessons = Lesson.objects.all()
     return JsonResponse({"lessons": list(lessons.values())})
 
 
+@csrf_exempt
 def query_lesson(request, id):
     lesson = get_object_or_404(Lesson, jw_id=id)
     return JsonResponse({"lesson": model_to_dict_for_lesson(lesson)})
@@ -87,6 +99,7 @@ class CFEmailWorkerForm(forms.Form):
     timestamp = forms.DateTimeField()
 
 
+@csrf_exempt
 def cf_email_worker(request):
     """
     This function is called by Cloudflare worker
@@ -102,7 +115,7 @@ def cf_email_worker(request):
     }
     """
 
-    form = CFEmailWorkerForm(request.POST)
+    form = CFEmailWorkerForm(request.GET)
     if not form.is_valid():
         return JsonResponse({"error": "invalid form"})
 
@@ -116,16 +129,42 @@ def cf_email_worker(request):
     value = form.cleaned_data["value"]
 
     if field == "notice":
-        lesson.notice_md_text.update(
-            text=value,
-            last_modifed=form.cleaned_data["timestamp"],
-            last_modified_by=form.cleaned_data["from"],
-        )
+        notice = lesson.notice_md_text
+        if notice:
+            notice.update(
+                text=value,
+                last_modified=form.cleaned_data["timestamp"],
+                last_modified_by=form.cleaned_data["from_"],
+            )
+        else:
+            notice = EditableTextModel(
+                text=value,
+                last_modified=form.cleaned_data["timestamp"],
+                last_modified_by=form.cleaned_data["from_"],
+            )
+            notice.save()
+            lesson.notice_md_text = notice
+            lesson.save()
+
+        return JsonResponse({"success": True})
     elif field == "homework":
-        lesson.homework_md_text.update(
-            text=value,
-            last_modifed=form.cleaned_data["timestamp"],
-            last_modified_by=form.cleaned_data["from"],
-        )
+        homework = lesson.homework_md_text
+        if homework:
+            homework.update(
+                text=value,
+                last_modified=form.cleaned_data["timestamp"],
+                last_modified_by=form.cleaned_data["from_"],
+            )
+        else:
+            homework = EditableTextModel(
+                text=value,
+                last_modified=form.cleaned_data["timestamp"],
+                last_modified_by=form.cleaned_data["from_"],
+            )
+            homework.save()
+            lesson.homework_md_text = homework
+            lesson.save()
+
+        return JsonResponse({"success": True})
     else:
         return JsonResponse({"error": "invalid field"})
