@@ -1,8 +1,14 @@
+import os
+
+from django import forms
 from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 from .models import *
+
+# this would be set in .env file, loaded by docker-compose
+CF_WORKER_CREDENTIAL = os.environ.get("CF_WORKER_CREDENTIAL")
 
 
 def add_prefix_to_dict_keys(prefix, dict):
@@ -70,3 +76,56 @@ def query_lesson_all(request):
 def query_lesson(request, id):
     lesson = get_object_or_404(Lesson, jw_id=id)
     return JsonResponse({"lesson": model_to_dict_for_lesson(lesson)})
+
+
+class CFEmailWorkerForm(forms.Form):
+    credential = forms.CharField(max_length=100)
+    id = forms.IntegerField()
+    field = forms.CharField(max_length=100)
+    value = forms.CharField(max_length=100)
+    from_ = forms.EmailField()
+    timestamp = forms.DateTimeField()
+
+
+def cf_email_worker(request):
+    """
+    This function is called by Cloudflare worker
+
+    Payload from CF worker:
+    {
+        "credential": "123456",
+        "id": "123456",
+        "field": "name",
+        "value": "new name"
+        "from": "xxx@xxx.xxx",
+        "timestamp": "2021-01-01 00:00:00",
+    }
+    """
+
+    form = CFEmailWorkerForm(request.POST)
+    if not form.is_valid():
+        return JsonResponse({"error": "invalid form"})
+
+    if form.cleaned_data["credential"] != CF_WORKER_CREDENTIAL:
+        return JsonResponse({"error": "invalid credential"})
+
+    id = form.cleaned_data["id"]
+    lesson = get_object_or_404(Lesson, jw_id=id)
+
+    field = form.cleaned_data["field"]
+    value = form.cleaned_data["value"]
+
+    if field == "notice":
+        lesson.notice_md_text.update(
+            text=value,
+            last_modifed=form.cleaned_data["timestamp"],
+            last_modified_by=form.cleaned_data["from"],
+        )
+    elif field == "homework":
+        lesson.homework_md_text.update(
+            text=value,
+            last_modifed=form.cleaned_data["timestamp"],
+            last_modified_by=form.cleaned_data["from"],
+        )
+    else:
+        return JsonResponse({"error": "invalid field"})

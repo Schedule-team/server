@@ -1,6 +1,31 @@
 from django.db import models
 
 
+class EditableTextModel(models.Model):
+    id = models.AutoField(primary_key=True)
+
+    text = models.TextField(blank=True, null=True)
+    last_modified = models.DateTimeField(auto_now=True)
+    last_modified_by = models.TextField(blank=True, null=True)
+    history = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.text}"
+
+    def update(self, text, last_modifed, last_modified_by):
+        self.text = text
+        self.last_modified = last_modifed
+        self.last_modified_by = last_modified_by
+        self.history = f"""
+        {last_modified_by} @ {last_modifed} : 
+        
+        {text}
+        ==========
+        {self.history}
+        """
+        self.save()
+
+
 class Course(models.Model):
     id = models.AutoField(primary_key=True)
 
@@ -128,12 +153,26 @@ class Lesson(models.Model):
 
     homepage_url = models.TextField(blank=True, null=True)  # 课程主页
 
-    notice_md_text = models.TextField(
-        blank=True, null=True
-    )  # 课程公告 markdown 文本
-    homework_md_text = models.TextField(
-        blank=True, null=True
-    )  # 课程作业 markdown 文本
+    # notice_md_text = models.TextField(
+    #     blank=True, null=True
+    # )  # 课程公告 markdown 文本
+    # homework_md_text = models.TextField(
+    #     blank=True, null=True
+    # )  # 课程作业 markdown 文本
+    notice_md_text = models.ForeignKey(
+        EditableTextModel,
+        on_delete=models.CASCADE,
+        related_name="notice",
+        blank=True,
+        null=True,
+    )
+    homework_md_text = models.ForeignKey(
+        EditableTextModel,
+        on_delete=models.CASCADE,
+        related_name="homework",
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f"{self.course.name} ({self.code})"
