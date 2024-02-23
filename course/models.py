@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 
 class EditableTextModel(models.Model):
@@ -142,6 +143,8 @@ class Lecture(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
+    history = HistoricalRecords()
+
     def __str__(self):
         return f"{self.lesson.course.name} ({self.lesson.code}) {self.start_time} - {self.end_time}"
 
@@ -160,6 +163,8 @@ class Exam(models.Model):
 
     description = models.TextField()  # 考试描述，例如 开卷/闭卷 注意事项等
 
+    history = HistoricalRecords()
+
     def __str__(self):
         return f"{self.lesson.course.name} ({self.lesson.code}) {self.type} {self.start_time} - {self.end_time}"
 
@@ -173,6 +178,8 @@ class Homework(models.Model):
     deadline = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"{self.lesson.course.name} ({self.lesson.code}) {self.description} {self.deadline}"

@@ -13,3 +13,4 @@ python-dotenv
 whitenoise
 mail-parser
 glom
+django-simple-history
