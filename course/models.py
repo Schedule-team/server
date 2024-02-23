@@ -44,7 +44,11 @@ class Course(models.Model):
     id = models.AutoField(primary_key=True)
     jw_id = models.TextField(unique=True)  # 教务系统 ID
 
-    semesters = models.ManyToManyField(Semester, blank=True)
+    semesters = models.ManyToManyField(
+        Semester,
+        related_name="semester_courses",
+        blank=True
+    )
 
     # 课程编号 MATH001108 (短，多个课堂共用)
     code = models.TextField(unique=True)
@@ -100,9 +104,21 @@ class Lesson(models.Model):
     id = models.AutoField(primary_key=True)
     jw_id = models.TextField(unique=True)  # 教务系统 ID
 
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    teachers = models.ManyToManyField(Teacher, blank=True)
+    semester = models.ForeignKey(
+        Semester,
+        related_name="semester_lessons",
+        on_delete=models.CASCADE
+    )
+    course = models.ForeignKey(
+        Course,
+        related_name="course_lessons",
+        on_delete=models.CASCADE
+    )
+    teachers = models.ManyToManyField(
+        Teacher,
+        related_name="teacher_lessons",
+        blank=True
+    )
 
     code = models.TextField()  # MATH001108.01 (长，一个课程一个课号)
     campus = models.TextField()  # 校区
@@ -134,7 +150,11 @@ class Lecture(models.Model):
     id = models.AutoField(primary_key=True)
     # jw_id = models.TextField(unique=True)  # 教务系统 ID
 
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(
+        Lesson,
+        related_name="lesson_lectures",
+        on_delete=models.CASCADE
+    )
     location = models.ForeignKey(
         Location, on_delete=models.CASCADE, blank=True, null=True
     )
@@ -153,7 +173,11 @@ class Exam(models.Model):
     id = models.AutoField(primary_key=True)
     jw_id = models.TextField(unique=True)  # 教务系统 ID
 
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(
+        Lesson,
+        related_name="lesson_exams",
+        on_delete=models.CASCADE
+    )
     locations = models.ManyToManyField(Location, blank=True)
 
     type = models.TextField()  # 考试类型：期中考试/期末考试/补考
@@ -172,7 +196,11 @@ class Exam(models.Model):
 class Homework(models.Model):
     id = models.AutoField(primary_key=True)
 
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(
+        Lesson,
+        related_name="lesson_homeworks",
+        on_delete=models.CASCADE
+    )
 
     description = models.TextField()
     deadline = models.DateTimeField()

@@ -14,3 +14,5 @@ whitenoise
 mail-parser
 glom
 django-simple-history
+graphene-django
+django-filter
