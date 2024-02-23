@@ -18,7 +18,7 @@ class EditableTextModel(models.Model):
         self.last_modified_by = last_modified_by
         self.history = f"""
         {last_modified_by} @ {last_modified} :
-        
+
         {text}
         ==========
         {self.history}
@@ -26,50 +26,8 @@ class EditableTextModel(models.Model):
         self.save()
 
 
-class Course(models.Model):
-    id = models.AutoField(primary_key=True)
-
-    jw_id = models.TextField(unique=True)  # 教务系统 ID
-
-    # 课程编号 MATH001108 (短，多个课程共用)
-    code = models.TextField(unique=True)
-    name = models.TextField()  # 课程名
-    period = models.IntegerField()  # 学时
-    credits = models.FloatField()  # 学分
-
-    type_base = models.TextField()  # 课程类别
-    type_teaching_method = models.TextField()  # 教学类型
-    type_join_type = models.TextField()  # 选课类型
-    type_level = models.TextField()  # 课程层次
-    open_department = models.TextField()  # 开课单位
-
-    exam_type = models.TextField()  # 考核方式
-    grading_type = models.TextField()  # 评分制 (五等级制/百分制/二等级制)
-
-    description = models.TextField(blank=True, null=True)  # 课程描述
-    info = models.TextField()  # json string for other info
-
-    def __str__(self):
-        return f"{self.name} ({self.code})"
-
-
-class Teacher(models.Model):
-    id = models.AutoField(primary_key=True)
-
-    jw_id = models.TextField(unique=True)  # 教务系统 ID, 识别教师用 (重名)
-
-    name = models.TextField()
-    email = models.TextField(blank=True, null=True)
-    office_location = models.TextField(blank=True, null=True)
-    homepage_url = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.name} ({self.email})"
-
-
 class Semester(models.Model):
     id = models.AutoField(primary_key=True)
-
     jw_id = models.TextField(unique=True)  # 教务系统 ID
 
     code = models.TextField()  # 202301 (学年 + 学期)
@@ -81,9 +39,52 @@ class Semester(models.Model):
         return f"{self.name} ({self.code}) ({self.start_date} - {self.end_date})"
 
 
+class Course(models.Model):
+    id = models.AutoField(primary_key=True)
+    jw_id = models.TextField(unique=True)  # 教务系统 ID
+
+    semesters = models.ManyToManyField(Semester, blank=True)
+
+    # 课程编号 MATH001108 (短，多个课堂共用)
+    code = models.TextField(unique=True)
+    name = models.TextField(blank=True, null=True)  # 课程名
+    period = models.IntegerField(blank=True, null=True)  # 学时
+    credits = models.FloatField(blank=True, null=True)  # 学分
+
+    type_base = models.TextField(blank=True, null=True)  # 课程类别
+    type_teaching_method = models.TextField(blank=True, null=True)  # 教学类型
+    type_join_type = models.TextField(blank=True, null=True)  # 选课类型
+    type_level = models.TextField(blank=True, null=True)  # 课程层次
+    open_department = models.TextField(blank=True, null=True)  # 开课单位
+
+    exam_type = models.TextField(blank=True, null=True)  # 考核方式
+    grading_type = models.TextField(
+        blank=True, null=True
+    )  # 评分制 (五等级制/百分制/二等级制)
+
+    description = models.TextField(blank=True, null=True)  # 课程描述
+    # json string for other info
+    info = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.code})"
+
+
+class Teacher(models.Model):
+    id = models.AutoField(primary_key=True)
+    jw_id = models.TextField(unique=True)  # 教务系统 ID, 识别教师用 (重名)
+
+    name = models.TextField()
+    email = models.TextField(blank=True, null=True)
+    office_location = models.TextField(blank=True, null=True)
+    homepage_url = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.email})"
+
+
 class Location(models.Model):
     id = models.AutoField(primary_key=True)
-
     jw_id = models.TextField(unique=True)  # 教务系统 ID
 
     campus = models.TextField()
@@ -95,45 +96,7 @@ class Location(models.Model):
 
 
 class Lesson(models.Model):
-    class Lecture(models.Model):
-        id = models.AutoField(primary_key=True)
-
-        # jw_id = models.TextField(unique=True)  # 教务系统 ID
-
-        lesson_info = models.ForeignKey("Lesson", on_delete=models.CASCADE)
-
-        teachers = models.ManyToManyField(Teacher, blank=True)
-        start_time = models.DateTimeField()
-        end_time = models.DateTimeField()
-
-        location = models.ForeignKey(
-            Location, on_delete=models.CASCADE, blank=True, null=True
-        )
-
-        def __str__(self):
-            return f"{self.lesson_info.course.name} ({self.lesson_info.code}) {self.start_time} - {self.end_time}"
-
-    class Exam(models.Model):
-        id = models.AutoField(primary_key=True)
-
-        jw_id = models.TextField(unique=True)  # 教务系统 ID
-
-        lesson_info = models.ForeignKey("Lesson", on_delete=models.CASCADE)
-        type = models.TextField()  # 考试类型：期中考试/期末考试/补考
-
-        start_time = models.DateTimeField()
-        end_time = models.DateTimeField()
-
-        description = models.TextField()  # 考试描述，例如 开卷/闭卷 注意事项等
-
-        # location = models.ForeignKey(Location, on_delete=models.CASCADE)
-        locations = models.ManyToManyField(Location, blank=True)
-
-        def __str__(self):
-            return f"{self.lesson_info.course.name} ({self.lesson_info.code}) {self.type} {self.start_time} - {self.end_time}"
-
     id = models.AutoField(primary_key=True)
-
     jw_id = models.TextField(unique=True)  # 教务系统 ID
 
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
@@ -148,28 +111,12 @@ class Lesson(models.Model):
         blank=True, null=True
     )  # 上课时间：1-12 周 5503: 1(8,9,10)
 
-    lectures = models.ManyToManyField(Lecture, blank=True)
-    exams = models.ManyToManyField(Exam, blank=True)
-
     homepage_url = models.TextField(blank=True, null=True)  # 课程主页
 
-    # notice_md_text = models.TextField(
-    #     blank=True, null=True
-    # )  # 课程公告 markdown 文本
-    # homework_md_text = models.TextField(
-    #     blank=True, null=True
-    # )  # 课程作业 markdown 文本
     notice_md_text = models.ForeignKey(
         EditableTextModel,
         on_delete=models.CASCADE,
         related_name="notice",
-        blank=True,
-        null=True,
-    )
-    homework_md_text = models.ForeignKey(
-        EditableTextModel,
-        on_delete=models.CASCADE,
-        related_name="homework",
         blank=True,
         null=True,
     )
@@ -180,3 +127,52 @@ class Lesson(models.Model):
     @property
     def teachers_name(self):
         return ", ".join([teacher.name for teacher in self.teachers.all()])
+
+
+class Lecture(models.Model):
+    id = models.AutoField(primary_key=True)
+    # jw_id = models.TextField(unique=True)  # 教务系统 ID
+
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, blank=True, null=True
+    )
+
+    teachers = models.ManyToManyField(Teacher, blank=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.lesson.course.name} ({self.lesson.code}) {self.start_time} - {self.end_time}"
+
+
+class Exam(models.Model):
+    id = models.AutoField(primary_key=True)
+    jw_id = models.TextField(unique=True)  # 教务系统 ID
+
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    locations = models.ManyToManyField(Location, blank=True)
+
+    type = models.TextField()  # 考试类型：期中考试/期末考试/补考
+
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+
+    description = models.TextField()  # 考试描述，例如 开卷/闭卷 注意事项等
+
+    def __str__(self):
+        return f"{self.lesson.course.name} ({self.lesson.code}) {self.type} {self.start_time} - {self.end_time}"
+
+
+class Homework(models.Model):
+    id = models.AutoField(primary_key=True)
+
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+
+    description = models.TextField()
+    deadline = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.lesson.course.name} ({self.lesson.code}) {self.description} {self.deadline}"
