@@ -1,6 +1,6 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
-from django.contrib.auth.models import User
+from user.models import CustomUser as User
 
 
 class EditableTextModel(models.Model):

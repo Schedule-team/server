@@ -3,7 +3,6 @@ from graphene_django.views import GraphQLView
 from django.views.decorators.csrf import csrf_exempt
 
 from . import api, views
-from .schema import schema
 
 urlpatterns = [
     path("api/course/", api.query_course_all, name="api_course_all"),
@@ -21,6 +20,4 @@ urlpatterns = [
     path("course/<int:id>", views.course_view, name="course"),
     path("lesson/<int:id>", views.lesson_view, name="lesson"),
     path("teacher/<int:id>", views.teacher_view, name="teacher"),
-    #
-    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 ]

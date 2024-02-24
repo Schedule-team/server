@@ -16,4 +16,5 @@ glom
 django-simple-history
 graphene-django
 django-filter
-django-graphql-auth
+strawberry-graphql-django
+strawberry-django-auth
