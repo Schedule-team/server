@@ -1,5 +1,6 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
+from django.contrib.auth.models import User
 
 
 class EditableTextModel(models.Model):
@@ -211,3 +212,14 @@ class Homework(models.Model):
 
     def __str__(self):
         return f"{self.lesson.course.name} ({self.lesson.code}) {self.description} {self.deadline}"
+
+
+class UserData(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    lessons = models.ManyToManyField(Lesson, blank=True)
+
+    def register_lesson_ids(self, lesson_ids):
+        for lesson_id in lesson_ids:
+            lesson = Lesson.objects.get(id=lesson_id)
+            self.lessons.add(lesson)
+        self.save()

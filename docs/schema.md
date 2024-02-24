@@ -23,22 +23,28 @@ Users
 
 ```mermaid
 stateDiagram-v2
-    User --> Lesson
+    User --> UserData
+    UserData --> User
+
+    UserData --> Lesson
 
     Lesson --> Lecture
     Lesson --> Homework
     Lesson --> Exam
 ```
 
-Comments:
+Comments (**NOT IMPLEMENTED**)
 
 ```mermaid
 stateDiagram-v2
-    Comment --> Homework
-    Comment --> Lecture
-    Comment --> Exam
-    Comment --> Lesson
-    Comment --> Course
-    Comment --> Comment : MTM (reply)
+    Comment --> User : MTM
 
+    Comment --> Redirection
+    Redirection --> Comment : (reply)
+
+    Redirection --> Homework
+    Redirection --> Lecture
+    Redirection --> Exam
+    Redirection --> Lesson
+    Redirection --> Course
 ```
