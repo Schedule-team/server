@@ -18,6 +18,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 ALLOWED_HOSTS = ["schedule-test.tiankaima.dev"]
 CSRF_TRUSTED_ORIGINS = ["https://schedule-test.tiankaima.dev"]
+STATIC_ROOT = BASE_DIR / "static"
 
 DATABASES = {
     "default": {
