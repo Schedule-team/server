@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from gqlauth.settings_type import GqlAuthSettings
 
 from dotenv import load_dotenv
 
@@ -36,13 +37,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "simple_history",
-    "graphene_django",
-    "graphql_auth",
-    "graphql_jwt.refresh_token.apps.RefreshTokenConfig",
-    "course.apps.CourseConfig",
     "bootstrap5",
+    "strawberry_django",
+    "gqlauth",
+
+    "course.apps.CourseConfig",
+    "user.apps.UserConfig",
 ]
+
+AUTH_USER_MODEL = "user.CustomUser"
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -53,38 +59,27 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "simple_history.middleware.HistoryRequestMiddleware"
+    "simple_history.middleware.HistoryRequestMiddleware",
+    'gqlauth.core.middlewares.django_jwt_middleware',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+GQL_AUTH = GqlAuthSettings(
+    LOGIN_REQUIRE_CAPTCHA=False,
+    REGISTER_REQUIRE_CAPTCHA=False,
+    ALLOW_LOGIN_NOT_VERIFIED=True,
+)
 
 ROOT_URLCONF = "api.urls"
 
-GRAPHQL_JWT = {
-    # ...
-    "JWT_ALLOW_ANY_CLASSES": [
-        "graphql_auth.mutations.Register",
-        "graphql_auth.mutations.VerifyAccount",
-        "graphql_auth.mutations.ResendActivationEmail",
-        "graphql_auth.mutations.SendPasswordResetEmail",
-        "graphql_auth.mutations.PasswordReset",
-        "graphql_auth.mutations.ObtainJSONWebToken",
-        "graphql_auth.mutations.VerifyToken",
-        "graphql_auth.mutations.RefreshToken",
-        "graphql_auth.mutations.RevokeToken",
-        "graphql_auth.mutations.VerifySecondaryEmail",
-    ],
-    "JWT_GET_USER_BY_NATURAL_KEY_HANDLER": "graphql_auth.utils.get_user_by_natural_key",
-    'JWT_VERIFY_EXPIRATION': True,
-    'JWT_LONG_RUNNING_REFRESH_TOKEN': True,
-}
-
-AUTHENTICATION_BACKENDS = [
-    "graphql_auth.backends.GraphQLAuthBackend",
-]
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -98,6 +93,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "api.wsgi.application"
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -114,32 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-            'propagate': False,
-        },
-    },
-}
-
-
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "static"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
