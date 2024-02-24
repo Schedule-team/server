@@ -8,7 +8,7 @@ Django backend to provide api access, basic frontend to display information.
 
 1. `python3 -m venv venv`
 2. `source venv/bin/activate`
-3. `cp /utils/settings_local.py /api/settings.py`, generate your own secret key
+3. `cp ./utils/settings_local.py ./api/settings.py`, generate your own secret key
 4. `pip install -r requirements.txt`
 5. `python manage.py migrate`
 6. `python manage.py createsuperuser`

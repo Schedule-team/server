@@ -6,7 +6,7 @@ requests
 datetime
 tqdm
 django-bootstrap-v5
-psycopg2
+psycopg2-binary
 uvicorn
 gunicorn
 python-dotenv
